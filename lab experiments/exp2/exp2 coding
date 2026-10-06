@@ -1,0 +1,48 @@
+import pandas as pd
+
+data = pd.DataFrame([
+    ['Sunny', 'Warm', 'Normal', 'Strong', 'Yes'],
+    ['Sunny', 'Warm', 'High', 'Strong', 'Yes'],
+    ['Rainy', 'Cold', 'High', 'Strong', 'No'],
+    ['Sunny', 'Warm', 'High', 'Weak', 'Yes']
+], columns=['Sky', 'Temp', 'Humidity', 'Wind', 'EnjoySport'])
+
+S = ['0', '0', '0', '0']
+G = [['?', '?', '?', '?']]
+
+for _, row in data.iterrows():
+
+    example = list(row.iloc[:4])
+    label = row['EnjoySport']
+
+    if label == 'Yes':
+
+        for i in range(4):
+            if S[i] == '0':
+                S[i] = example[i]
+            elif S[i] != example[i]:
+                S[i] = '?'
+
+    else:
+
+        new_G = []
+
+        for g in G:
+            for i in range(4):
+
+                if g[i] == '?' and S[i] != '?' and S[i] != '0':
+                    new_g = g.copy()
+                    new_g[i] = S[i]
+                    new_G.append(new_g)
+
+        G = new_G
+
+print("Training Data:")
+print(data)
+
+print("\nSpecific Boundary:")
+print(S)
+
+print("\nGeneral Boundary:")
+for g in G:
+    print(g)
