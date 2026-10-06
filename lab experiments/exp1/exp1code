@@ -1,0 +1,63 @@
+import pandas as pd
+
+# Training data
+data = pd.DataFrame([
+    ['Sunny', 'Warm', 'Normal', 'Strong', 'Yes'],
+    ['Sunny', 'Warm', 'High', 'Strong', 'Yes'],
+    ['Rainy', 'Cold', 'High', 'Strong', 'No'],
+    ['Sunny', 'Warm', 'High', 'Weak', 'Yes']
+], columns=['Sky', 'Temp', 'Humidity', 'Wind', 'EnjoySport'])
+
+# Attributes
+attributes = list(data.columns[:-1])
+
+# Specific boundary
+S = ['0'] * len(attributes)
+
+# General boundary
+G = [['?'] * len(attributes)]
+
+# Candidate Elimination
+for _, row in data.iterrows():
+
+    example = list(row.iloc[:-1])
+    label = row['EnjoySport']
+
+    # Positive example
+    if label == 'Yes':
+
+        # Update Specific boundary
+        for i in range(len(attributes)):
+
+            if S[i] == '0':
+                S[i] = example[i]
+
+            elif S[i] != example[i]:
+                S[i] = '?'
+
+    # Negative example
+    else:
+
+        new_G = []
+
+        for g in G:
+
+            for i in range(len(attributes)):
+
+                if g[i] == '?' and S[i] != '?' and S[i] != '0':
+                    new_g = g.copy()
+                    new_g[i] = S[i]
+                    new_G.append(new_g)
+
+        G = new_G
+
+# Display
+print("Training Data:")
+print(data)
+
+print("\nSpecific Boundary (S):")
+print(S)
+
+print("\nGeneral Boundary (G):")
+for g in G:
+    print(g)
